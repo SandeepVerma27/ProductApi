@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 class CategoryManagement extends Controller
 {
 
+
     /**
      * Display a listing of all categories.
      *
@@ -18,6 +19,7 @@ class CategoryManagement extends Controller
      */
     public function showAllCategories()
     {
+
         $categories = Category::all();
 
         if ($categories->isEmpty()) {
@@ -97,7 +99,38 @@ class CategoryManagement extends Controller
 
     public function showCategoryById($id)
     {
-        // Logic to show a category by ID
+        $validator = Validator::make(['id' => $id], [
+            'id' => 'required|numeric|max:11'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'message' => 'validation error',
+                    'error' => $validator->errors(),
+                ],
+                422
+            );
+        }
+
+        $categoryExistense = Category::where('id', $id)->exists();
+        if (!$categoryExistense) {
+            return response()->json([
+                'message' => 'Please check category existense'
+            ], 404);
+        }
+
+        $category = Category::find($id);
+        if (!$category) {
+            return response()->json([
+                'message' => 'Category not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => 'Category retrive successfully',
+            'data' => $category
+        ], 200);
     }
 
 
@@ -109,10 +142,54 @@ class CategoryManagement extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function updateCategory(Request $request, $id)
-    {
-        // Logic to update a category by ID
-    }
+    // public function updateCategory(Request $request, $id)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required|string|max:255',
+    //         'sort_order' => 'required|numeric|max:11'
+    //     ]);
+
+    //     if ($validator->fails()) {
+    //         return response()->json(
+    //             [
+    //                 'message' => 'Validation error',
+    //                 'error' => $validator->errors()
+    //             ]
+    //         );
+    //     }
+    //     $categoryExistense = Category::where('id', $id)->exists();
+    //     if (!$categoryExistense) {
+    //         return response()->json([
+    //             'message' => 'Please check the category existense!'
+    //         ], 422);
+    //     }
+
+    //     $category = Category::find($id)->first();
+    //     if (!$category) {
+    //         return response()->json(
+    //             [
+    //                 'message' => 'Category not found',
+    //             ],
+    //             404
+    //         );
+    //     } else {
+    //         $category->name = $request->name;
+    //         $category->slug = Str::slug($request->slug);
+    //         $category->updated_at = now();
+    //     }
+
+    //     if ($category->save()) {
+    //         return response()->json(
+    //             [
+    //                 'message' => 'Product Update successfully',
+    //                 'data' => $category
+
+
+    //             ],
+    //             200
+    //         );
+    //     }
+    // }
 
 
 
@@ -124,8 +201,8 @@ class CategoryManagement extends Controller
      * @param int $id
      * @return \Illuminate\Http\Response
      */
-    public function destroyCategory($id)
-    {
-        // Logic to delete a category by ID
-    }
+    // public function destroyCategory($id)
+    // {
+    //     // Logic to delete a category by ID
+    // }
 }

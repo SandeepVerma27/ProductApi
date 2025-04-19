@@ -13,6 +13,7 @@ Route::get('/user', function (Request $request) {
 
 /* PRODUCT CATEGORY MANAGEMENT*/
 Route::get('/all-categories', [CategoryManagement::class, 'showAllCategories']);
+Route::get('/all', [CategoryManagement::class, 'chekc']);
 Route::post('/store-category', [CategoryManagement::class, 'storeCategory']);
 Route::get('/category/{id}', [CategoryManagement::class, 'showCategoryById']);
 Route::put('/category/{id}', [CategoryManagement::class, 'updateCategory']);
